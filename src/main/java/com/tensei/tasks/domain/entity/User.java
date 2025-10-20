@@ -10,7 +10,6 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -35,7 +34,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Task> tasks;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, name = "register_at")
     LocalDateTime registerAt;
 
     @PrePersist

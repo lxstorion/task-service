@@ -7,7 +7,6 @@ import lombok.experimental.FieldDefaults;
 @Entity
 @Table(name = "tasks")
 @NoArgsConstructor
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -21,12 +20,12 @@ public class Task {
     Long id;
 
     @Column(nullable = false, name = "title")
-    String title;
+    String title = "Task title";
 
     @Column(name = "description")
     String description;
 
-    @Column(name = "done")
+    @Column(name = "done", nullable = false)
     boolean done = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
