@@ -33,11 +33,14 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
     implementation("org.postgresql:postgresql:42.7.7")
-    // https://mvnrepository.com/artifact/org.flywaydb/flyway-core
     implementation("org.flywaydb:flyway-core:11.14.1")
-    // https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql
     runtimeOnly("org.flywaydb:flyway-database-postgresql:11.14.1")
+
+    implementation ("org.mapstruct:mapstruct:1.6.2")
+    annotationProcessor ("org.mapstruct:mapstruct-processor:1.6.2")
+    annotationProcessor ("org.projectlombok:lombok-mapstruct-binding:0.2.0")
 }
 
 tasks.withType<Test> {

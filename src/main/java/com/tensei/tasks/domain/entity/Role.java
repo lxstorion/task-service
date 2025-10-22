@@ -15,6 +15,8 @@ import java.util.Set;
 @Setter
 @ToString
 @EqualsAndHashCode
+@Builder
+@AllArgsConstructor
 public class Role {
 
     @Id
