@@ -15,10 +15,13 @@ import java.util.Set;
 @Setter
 @ToString
 @EqualsAndHashCode
+@Builder
+@AllArgsConstructor
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id")
     Long id;
 
     @Column(nullable = false, unique = true, name = "name")
