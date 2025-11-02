@@ -1,0 +1,1 @@
+INSERT INTO users (username, password, email, role, register_at) VALUES ('orion', 'pass', 'orion@gmail.com', 'ROLE_ADMIN', NOW());

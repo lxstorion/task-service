@@ -1,12 +1,9 @@
 package com.tensei.tasks.controller;
 
+import com.tensei.tasks.domain.dto.auth.JwtAuthenticationResponse;
 import com.tensei.tasks.domain.dto.auth.UserLoginRequest;
-import com.tensei.tasks.domain.dto.auth.UserLoginResponse;
 import com.tensei.tasks.domain.dto.auth.UserRegisterRequest;
-import com.tensei.tasks.domain.dto.auth.UserRegisterResponse;
-import com.tensei.tasks.service.impl.AuthService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.tensei.tasks.service.impl.JwtAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,37 +18,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthService authService;
+    private final JwtAuthService jwtAuthService;
 
-    @PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserLoginResponse> login(
-            @RequestBody UserLoginRequest userLoginRequest,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
+    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JwtAuthenticationResponse> register(@RequestBody UserRegisterRequest registerRequest) {
 
-        UserLoginResponse userLoginResponse = authService.login(
-                userLoginRequest.username(),
-                userLoginRequest.password(),
-                request, response
-        );
+        JwtAuthenticationResponse response = jwtAuthService.register(registerRequest);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
 
-        return ResponseEntity.ok(userLoginResponse);
     }
 
-    @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserRegisterResponse> register(
-            @RequestBody UserRegisterRequest userRegisterRequest,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
-        UserRegisterResponse userRegisterResponse = authService.register(
-                userRegisterRequest.username(),
-                userRegisterRequest.password(),
-                userRegisterRequest.email(),
-                request, response
-        );
-
-        return new ResponseEntity<>(userRegisterResponse, HttpStatus.CREATED);
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JwtAuthenticationResponse> login(@RequestBody UserLoginRequest loginRequest) {
+        JwtAuthenticationResponse response = jwtAuthService.login(loginRequest);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 }
