@@ -22,10 +22,8 @@ public class AuthController {
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JwtAuthenticationResponse> register(@RequestBody UserRegisterRequest registerRequest) {
-
         JwtAuthenticationResponse response = jwtAuthService.register(registerRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
-
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

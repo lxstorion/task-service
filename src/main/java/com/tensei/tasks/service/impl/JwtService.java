@@ -46,6 +46,16 @@ public class JwtService {
     }
 
     /**
+     * Extract subject claim from token
+     *
+     * @param token jwt
+     * @return username
+     */
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    /**
      * Checks if token is valid
      *
      * @param token token
@@ -66,6 +76,7 @@ public class JwtService {
      * @param <T> claim data type
      */
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        // todo handle possible exception
         Claims claims = Jwts.parser()
                 .verifyWith((SecretKey) getSigningKey())
                 .build()
