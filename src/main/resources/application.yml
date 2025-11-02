@@ -15,5 +15,9 @@ spring:
     locations: classpath:db/migrations
     baseline-on-migrate: true
 
+jwt:
+  token:
+    signing-key: e35428d40366009872c5d9ec7a794b5445425a46cd5a5bfd35957093716a42f3
+
 server:
   port: 8081

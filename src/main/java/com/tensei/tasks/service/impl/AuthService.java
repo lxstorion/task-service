@@ -6,7 +6,6 @@ import com.tensei.tasks.domain.entity.User;
 import com.tensei.tasks.exception.FailedAuthenticationException;
 import com.tensei.tasks.exception.UserAlreadyExistException;
 import com.tensei.tasks.mapper.AuthMapper;
-import com.tensei.tasks.repository.RoleRepository;
 import com.tensei.tasks.repository.UserRepository;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +26,6 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
     private final SecurityContextRepository securityContextRepository;
     private final UserRepository userRepository;
     private final AuthMapper authMapper;

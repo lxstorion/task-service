@@ -41,6 +41,11 @@ dependencies {
     implementation ("org.mapstruct:mapstruct:1.6.2")
     annotationProcessor ("org.mapstruct:mapstruct-processor:1.6.2")
     annotationProcessor ("org.projectlombok:lombok-mapstruct-binding:0.2.0")
+
+    // JWT
+    implementation("io.jsonwebtoken:jjwt-api:0.13.0")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
 }
 
 tasks.withType<Test> {
