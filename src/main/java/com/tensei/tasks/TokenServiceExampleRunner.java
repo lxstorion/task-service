@@ -1,9 +1,9 @@
 package com.tensei.tasks;
 
-import com.tensei.tasks.domain.entity.User;
-import com.tensei.tasks.domain.entity.enums.Role;
-import com.tensei.tasks.service.UserService;
-import com.tensei.tasks.service.impl.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tensei.tasks.domain.dto.auth.JwtAuthenticationResponse;
+import com.tensei.tasks.domain.dto.auth.UserRegisterRequest;
+import com.tensei.tasks.service.impl.JwtAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -12,23 +12,18 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TokenServiceExampleRunner implements CommandLineRunner {
 
-    private final JwtService jwtService;
-    private final UserService userService;
+    private final JwtAuthService jwtAuthService;
 
     @Override
     public void run(String... args) throws Exception {
-
-        User user = User.builder()
-                .username("example")
-                .password("example-password")
-                .email("example@example.com")
-                .role(Role.ROLE_USER)
+        UserRegisterRequest request = UserRegisterRequest.builder()
+                .username("another")
+                .password("another-pass")
+                .email("example@gmail.com")
                 .build();
 
-        userService.create(user);
-
-        String generatedToken = jwtService.generateToken(user);
-        System.out.println("Generated token: " + generatedToken);
-
+        JwtAuthenticationResponse response = jwtAuthService.register(request);
+        System.out.print("Response: ");
+        new ObjectMapper().writeValue(System.out, response);
     }
 }

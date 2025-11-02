@@ -1,6 +1,7 @@
 package com.tensei.tasks.service.impl;
 
 import com.tensei.tasks.domain.entity.User;
+import com.tensei.tasks.exception.ResourceNotFoundException;
 import com.tensei.tasks.exception.UserAlreadyExistException;
 import com.tensei.tasks.repository.UserRepository;
 import com.tensei.tasks.service.UserService;
@@ -23,5 +24,11 @@ public class JpaUserService implements UserService {
         }
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public User fetchByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User with such username not found"));
     }
 }
