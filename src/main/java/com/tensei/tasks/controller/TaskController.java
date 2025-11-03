@@ -1,12 +1,18 @@
 package com.tensei.tasks.controller;
 
+import com.tensei.tasks.domain.dto.tasks.TaskResponse;
 import com.tensei.tasks.domain.entity.Task;
+import com.tensei.tasks.domain.entity.User;
 import com.tensei.tasks.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -26,8 +32,8 @@ public class TaskController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getTaskById(@RequestParam("id") Long id) {
 
-        Task task = taskService.findById(id);
-        return new ResponseEntity<>(task, HttpStatus.OK);
+        TaskResponse response = taskService.findById(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
@@ -37,6 +43,8 @@ public class TaskController {
         return null;
 
     }
+
+
 
     @DeleteMapping
     public ResponseEntity<Void> deleteTask(@RequestParam("id") Long id) {
