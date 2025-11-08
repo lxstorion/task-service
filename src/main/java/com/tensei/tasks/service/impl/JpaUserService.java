@@ -36,7 +36,6 @@ public class JpaUserService implements UserService {
 
     @Override
     public User fetchByCredentials(String username, String password) {
-        System.out.println("In fetchByCredentials: password = " + password);
         return userRepository.findByUsernameAndPassword(username, password)
                 .orElseThrow(() -> new FailedAuthenticationException("Bad credentials"));
     }

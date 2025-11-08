@@ -1,5 +1,6 @@
 package com.tensei.tasks.controller;
 
+import com.tensei.tasks.domain.dto.tasks.TaskRequest;
 import com.tensei.tasks.domain.dto.tasks.TaskResponse;
 import com.tensei.tasks.domain.entity.Task;
 import com.tensei.tasks.domain.entity.User;
@@ -22,15 +23,15 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createTask(@RequestBody Task task) {
+    public ResponseEntity<TaskResponse> createTask(@RequestBody TaskRequest taskRequest) {
 
-        Task created = taskService.save(task);
+        TaskResponse created = taskService.save(taskRequest);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
 
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getTaskById(@RequestParam("id") Long id) {
+    public ResponseEntity<TaskResponse> getTaskById(@RequestParam("id") Long id) {
 
         TaskResponse response = taskService.findById(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
