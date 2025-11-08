@@ -3,11 +3,9 @@ package com.tensei.tasks.domain.dto.tasks;
 import lombok.Builder;
 
 @Builder
-public record TaskResponse(
-        Long id,
+public record TaskUpdateRequest(
         String title,
         String description,
-        boolean done,
-        TaskOwnerResponse owner
+        boolean done
 ) {
 }

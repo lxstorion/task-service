@@ -2,10 +2,13 @@ package com.tensei.tasks.controller;
 
 import com.tensei.tasks.domain.dto.tasks.TaskRequest;
 import com.tensei.tasks.domain.dto.tasks.TaskResponse;
+import com.tensei.tasks.domain.dto.tasks.TaskUpdateRequest;
 import com.tensei.tasks.domain.entity.Task;
 import com.tensei.tasks.domain.entity.User;
 import com.tensei.tasks.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,18 +33,29 @@ public class TaskController {
 
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TaskResponse> getTaskById(@RequestParam("id") Long id) {
+    @GetMapping(value = "/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TaskResponse> getTaskById(@PathVariable("id") Long taskId) {
 
-        TaskResponse response = taskService.findById(id);
+        TaskResponse response = taskService.findById(taskId);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateTask(@RequestParam("id") Long id, @RequestBody Task task) {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize(value = "hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<TaskResponse>> getAllTasks(Pageable pageable) {
 
-        return null;
+        List<TaskResponse> fetched = taskService.findAll(pageable);
+        return new ResponseEntity<>(fetched, HttpStatus.OK);
+
+    }
+
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TaskResponse> updateTask(@RequestParam("id") Long id,
+                                        @RequestBody TaskUpdateRequest task) {
+
+        TaskResponse response = taskService.update(id, task);
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
