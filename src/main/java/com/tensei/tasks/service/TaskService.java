@@ -12,5 +12,5 @@ public interface TaskService {
     TaskResponse findById(Long id);
     List<TaskResponse> findAll(Pageable pageable);
     TaskResponse update(Long id, TaskUpdateRequest task);
-    void deleteById(Integer id);
+    void deleteById(Long id);
 }

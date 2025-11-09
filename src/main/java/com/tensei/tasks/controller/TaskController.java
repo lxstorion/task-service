@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TaskResponse> createTask(@RequestBody TaskRequest taskRequest) {
+    public ResponseEntity<TaskResponse> createTask(@Validated @RequestBody TaskRequest taskRequest) {
 
         TaskResponse created = taskService.save(taskRequest);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
@@ -42,7 +43,6 @@ public class TaskController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize(value = "hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<TaskResponse>> getAllTasks(Pageable pageable) {
 
         List<TaskResponse> fetched = taskService.findAll(pageable);
@@ -59,12 +59,11 @@ public class TaskController {
 
     }
 
-
-
     @DeleteMapping
     public ResponseEntity<Void> deleteTask(@RequestParam("id") Long id) {
 
-        return null;
+        taskService.deleteById(id);
+        return new  ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 

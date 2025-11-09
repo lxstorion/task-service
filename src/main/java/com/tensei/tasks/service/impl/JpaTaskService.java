@@ -98,20 +98,21 @@ public class JpaTaskService implements TaskService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
 
-        if (!isAdmin(authorities))
-            throw new FailedAuthenticationException("Authentication error");
-
         PageRequest pageRequest = PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.ASC, "id"));
 
-        Page<Task> taskPage = taskRepository.findAll(pageRequest);
+        return isAdmin(authorities)
 
-        return taskPage.getContent().stream()
-                .map(taskMapper::toDto)
-                .toList();
+                ? taskRepository.findAll(pageRequest).getContent().stream()
+                                .map(taskMapper::toDto)
+                                .toList()
 
+                : taskRepository.findAll(pageRequest).getContent().stream()
+                                .filter(t -> t.getUser().getUsername().equals(auth.getName()))
+                                .map(taskMapper::toDto)
+                                .toList();
     }
 
     /**
@@ -146,8 +147,28 @@ public class JpaTaskService implements TaskService {
 
     }
 
+    /**
+     * Delete task with current id
+     *
+     * @param id id of task to delete
+     */
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
+
+        if (isAdmin(authorities))
+            taskRepository.deleteById(id);
+        else {
+            User authenticatedUser = userRepository.findByUsername(auth.getName())
+                    .orElseThrow(() -> new FailedAuthenticationException("Authentication error"));
+
+            if (!authenticatedUser.getId().equals(id))
+                throw new FailedAuthenticationException("Permissions error");
+
+            taskRepository.deleteById(id);
+        }
 
     }
 

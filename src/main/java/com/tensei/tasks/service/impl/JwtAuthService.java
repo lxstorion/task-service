@@ -5,12 +5,10 @@ import com.tensei.tasks.domain.dto.auth.UserLoginRequest;
 import com.tensei.tasks.domain.dto.auth.UserRegisterRequest;
 import com.tensei.tasks.domain.entity.User;
 import com.tensei.tasks.domain.entity.enums.Role;
-import com.tensei.tasks.mapper.AuthMapper;
 import com.tensei.tasks.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
