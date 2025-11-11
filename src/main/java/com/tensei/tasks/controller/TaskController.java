@@ -34,7 +34,7 @@ public class TaskController {
 
     }
 
-    @GetMapping(value = "/{taskId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskResponse> getTaskById(@PathVariable("id") Long taskId) {
 
         TaskResponse response = taskService.findById(taskId);

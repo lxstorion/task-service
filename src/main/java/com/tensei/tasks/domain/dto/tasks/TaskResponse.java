@@ -8,7 +8,6 @@ public record TaskResponse(
         @JsonProperty("id") Long id,
         @JsonProperty("title") String title,
         @JsonProperty("description") String description,
-        @JsonProperty("done") boolean done,
-        @JsonProperty("owner") TaskOwnerResponse owner
+        @JsonProperty("done") boolean done
 ) {
 }

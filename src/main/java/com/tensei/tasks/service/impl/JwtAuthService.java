@@ -9,6 +9,7 @@ import com.tensei.tasks.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -49,14 +50,14 @@ public class JwtAuthService {
      * @return JwtAuthenticationResponse contains JWT token
      */
     public JwtAuthenticationResponse login(UserLoginRequest userLoginRequest) {
-        authenticationManager.authenticate(
+        Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         userLoginRequest.username(),
                         userLoginRequest.password()
                 )
         );
 
-        var user = userService.getUserDetailsService().loadUserByUsername(userLoginRequest.username());
+        User user = (User) auth.getPrincipal();
 
         return new JwtAuthenticationResponse(jwtService.generateToken(user));
     }

@@ -1,5 +1,6 @@
 package com.tensei.tasks.service.impl;
 
+import com.tensei.tasks.domain.dto.auth.UserPrincipal;
 import com.tensei.tasks.domain.dto.tasks.TaskRequest;
 import com.tensei.tasks.domain.dto.tasks.TaskResponse;
 import com.tensei.tasks.domain.dto.tasks.TaskUpdateRequest;
@@ -9,10 +10,8 @@ import com.tensei.tasks.exception.FailedAuthenticationException;
 import com.tensei.tasks.exception.ResourceNotFoundException;
 import com.tensei.tasks.mapper.TaskMapper;
 import com.tensei.tasks.repository.TaskRepository;
-import com.tensei.tasks.repository.UserRepository;
 import com.tensei.tasks.service.TaskService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,14 +23,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class JpaTaskService implements TaskService {
 
     private final TaskRepository taskRepository;
-    private final UserRepository userRepository;
     private final TaskMapper taskMapper;
 
     /**
@@ -47,23 +44,12 @@ public class JpaTaskService implements TaskService {
 
         Task task = taskMapper.toEntity(taskRequest);
 
-        Task saved = null;
+        User authenticatedUser = (User) auth.getPrincipal();
+        task.setUser(authenticatedUser);
+        taskRepository.save(task);
 
-        if (isAdmin(authorities)) {
-            saved = taskRepository.save(task);
-        }
-        else if (authorities.contains(new SimpleGrantedAuthority("ROLE_USER"))) {
-            User authenticatedUser = userRepository.findByUsername(auth.getName())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-            task.setUser(authenticatedUser);
-            saved = taskRepository.save(task);
-        }
-
-        if (saved == null)
-            throw new FailedAuthenticationException("Authentication error");
-
-        return taskMapper.toDto(saved);
+        return taskMapper.toDto(task);
     }
 
     /**
@@ -109,46 +95,40 @@ public class JpaTaskService implements TaskService {
                                 .map(taskMapper::toDto)
                                 .toList()
 
-                : taskRepository.findAll(pageRequest).getContent().stream()
-                                .filter(t -> t.getUser().getUsername().equals(auth.getName()))
+                : taskRepository.findByUserUsername(auth.getName(), pageRequest).getContent().stream()
                                 .map(taskMapper::toDto)
                                 .toList();
+
     }
 
     /**
-     * Update task data with specified Id
+     * Update task data with specified id
      *
      * @param id identifier of task
-     * @param task new task data
+     * @param request new task data
      * @return task update response
      */
     @Override
-    public TaskResponse update(Long id, TaskUpdateRequest task) {
+    public TaskResponse update(Long id, TaskUpdateRequest request) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
 
-        Task existed = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+        Task existed = isAdmin(authorities)
+                ? taskRepository.findById(id)
+                                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id))
 
-        setFields(existed, task);
+                : taskRepository.findByIdAndUserUsername(id, auth.getName())
+                        .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
 
+        setFields(existed, request);
 
-        if (!isAdmin(authorities)) {
-            User authenticatedUser = userRepository.findByUsername(auth.getName())
-                    .orElseThrow(() -> new FailedAuthenticationException("Authentication error"));
-
-            if (!authenticatedUser.getId().equals(existed.getId())) {
-                throw new FailedAuthenticationException("Permissions error");
-            }
-
-        }
         return taskMapper.toDto(taskRepository.save(existed));
 
     }
 
     /**
-     * Delete task with current id
+     * Delete task with specified id
      *
      * @param id id of task to delete
      */
@@ -158,17 +138,15 @@ public class JpaTaskService implements TaskService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
 
-        if (isAdmin(authorities))
+        if (isAdmin(authorities)) {
             taskRepository.deleteById(id);
-        else {
-            User authenticatedUser = userRepository.findByUsername(auth.getName())
-                    .orElseThrow(() -> new FailedAuthenticationException("Authentication error"));
-
-            if (!authenticatedUser.getId().equals(id))
-                throw new FailedAuthenticationException("Permissions error");
-
-            taskRepository.deleteById(id);
+            return;
         }
+
+        Task task = taskRepository.findByIdAndUserUsername(id, auth.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+
+        taskRepository.delete(task);
 
     }
 

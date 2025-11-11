@@ -12,6 +12,9 @@ import java.util.Optional;
 @Repository
 public interface TaskRepository
         extends JpaRepository<Task, Long>, PagingAndSortingRepository<Task, Long> {
+
     Optional<Task> findByIdAndUserUsername(Long id, String username);
-    Page<Task> findAllByUserId(Long id, Pageable pageable);
+
+    Page<Task> findByUserUsername(String username, Pageable pageable);
+
 }

@@ -18,6 +18,7 @@ public class JpaUserService implements UserService {
 
     @Override
     public User create(User user) {
+        // TODO optimize
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new UserAlreadyExistException("User with such username already exists");
         }

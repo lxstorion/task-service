@@ -1,1 +1,4 @@
 INSERT INTO users (username, password, email, role, register_at) VALUES ('orion', '$2a$10$Ktzl5c2o0B8M0HPE5O8cQ.QTVTUMnQDzh/7zG/cN3Rf.jGXc3KnQy', 'orion@gmail.com', 'ROLE_ADMIN', NOW());
+INSERT INTO users (username, password, email, role, register_at) VALUES ('user1', '$2a$10$qrjfJDqv4ljBUw2/rHzdC.nmFsxYN5JV/ZWAyenmdCytJPLmrfC5G', 'user1@gmail.com', 'ROLE_USER', NOW());
+INSERT INTO users (username, password, email, role, register_at) VALUES ('user2', '$2a$10$f16INygTAnBzF1np18hFS.aE8ocN8.sEBjkpUfgnWYZ4nYAw/viaO', 'user2@gmail.com', 'ROLE_USER', NOW());
+INSERT INTO users (username, password, email, role, register_at) VALUES ('user3', '$2a$10$HnwYYsJlA7g.7EuQEVEupuDk/w6HPDz8hhlFtuPDFDc0LJwQ1kcIm', 'user3@gmail.com', 'ROLE_USER', NOW());
