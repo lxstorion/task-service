@@ -7,10 +7,13 @@ import com.tensei.tasks.exception.UserAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import java.security.SignatureException;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
@@ -38,6 +41,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleFailedAuthenticationException(FailedAuthenticationException ex, WebRequest request) {
         int status = HttpStatus.UNAUTHORIZED.value();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(createErrorResponse(ex, request, status));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
+        int status = HttpStatus.BAD_REQUEST.value();
+        ErrorResponse response = new ErrorResponse(
+                status,
+                ex.getBody().toString(),
+                request.getDescription(false).replace("uri=", ""),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     private ErrorResponse createErrorResponse(RuntimeException ex, WebRequest request, int status) {
